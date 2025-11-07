@@ -2,64 +2,126 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\User;
+use App\Entity\Pilote;
+use App\Entity\Ecurie;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-class PiloteFixtures extends Fixture
+class PiloteFixtures extends Fixture implements DependentFixtureInterface
 {
-    // ALTER TABLE `user` AUTO_INCREMENT=1;
-
-    private $passwordHasher;
-
-    public function __construct(UserPasswordHasherInterface $passwordHasher) {
-        $this->passwordHasher = $passwordHasher;
-    }
+    // ALTER TABLE `pilote` AUTO_INCREMENT=1;
 
     public function load(ObjectManager $manager): void
     {
-        $users = [
+        $pilotes = [
             [
-                'email'     => 'alexandre.peneau@gmail.com',
-                'password'  => 'a_p_efrei_b3_in',
-                'roles'     => ['ROLE_ADMIN']
+                'prenom'          => 'Lewis',
+                'nom'             => 'Hamilton',
+                'points_licence'  => 12,
+                'poste'           => true,
+                'ecurie_id'       => 1
             ],
             [
-                'email'     => 'isabelle.test@gmail.com',
-                'password'  => 'i_t_efrei_b3_in',
-                'roles'     => ['ROLE_MANAGER']
+                'prenom'          => 'George',
+                'nom'             => 'Russell',
+                'poste'           => true,
+                'points_licence'  => 12,
+                'ecurie_id'       => 1
             ],
             [
-                'email'     => 'john.test@gmail.com',
-                'password'  => 'j_t_efrei_b3_in',
-                'roles'     => ['ROLE_USER']
+                'prenom'          => 'Mick',
+                'nom'             => 'Schumacher',
+                'points_licence'  => 12,
+                'poste'           => false,
+                'ecurie_id'       => 1
             ],
             [
-                'email'     => 'matthieu.test@gmail.com',
-                'password'  => 'm_t_efrei_b3_in',
-                'roles'     => ['ROLE_USER']
+                'prenom'          => 'Charles',
+                'nom'             => 'Leclerc',
+                'points_licence'  => 12,
+                'poste'           => true,
+                'ecurie_id'       => 2
             ],
             [
-                'email'     => 'lucas.test@gmail.com',
-                'password'  => 'l_t_efrei_b3_in',
-                'roles'     => ['ROLE_USER']
+                'prenom'          => 'Carlos',
+                'nom'             => 'Sainz',
+                'points_licence'  => 12,
+                'poste'           => true,
+                'ecurie_id'       => 2
+            ],
+            [
+                'prenom'          => 'Antonio',
+                'nom'             => 'Giovinazzi',
+                'points_licence'  => 12,
+                'poste'           => false,
+                'ecurie_id'       => 2
+            ],
+            [
+                'prenom'          => 'Max',
+                'nom'             => 'Verstappen',
+                'points_licence'  => 12,
+                'poste'           => true,
+                'ecurie_id'       => 3
+            ],
+            [
+                'prenom'          => 'Sergio',
+                'nom'             => 'Perez',
+                'points_licence'  => 12,
+                'poste'           => true,
+                'ecurie_id'       => 3
+            ],
+            [
+                'prenom'          => 'Daniel',
+                'nom'             => 'Ricciardo',
+                'points_licence'  => 12,
+                'poste'           => false,
+                'ecurie_id'       => 3
+            ],
+            [
+                'prenom'          => 'Lando',
+                'nom'             => 'Norris',
+                'points_licence'  => 12,
+                'poste'           => true,
+                'ecurie_id'       => 4
+            ],
+            [
+                'prenom'          => 'Oscar',
+                'nom'             => 'Piastri',
+                'points_licence'  => 12,
+                'poste'           => true,
+                'ecurie_id'       => 4
+            ],
+            [
+                'prenom'          => 'Pato',
+                'nom'             => 'Oward',
+                'points_licence'  => 12,
+                'poste'           => false,
+                'ecurie_id'       => 4
             ]
         ];
 
-        foreach($users as $userinfos) {
-                $user = new User();
-                $user->setEmail($userinfos['email']);
-
-                $hashedPassword = $this->passwordHasher->hashPassword(
-                    $user,
-                    $userinfos['password']
-                );
-                $user->setPassword($hashedPassword);
-                $user->setRoles($userinfos['roles']);
-                $manager->persist($user);
+        foreach($pilotes as $piloteInfos) {
+            $ecurie = $manager->getRepository(Ecurie::class)->find($piloteInfos['ecurie_id']);
+            
+            if ($ecurie) {
+                $pilote = new Pilote();
+                $pilote->setPrenom($piloteInfos['prenom']);
+                $pilote->setNom($piloteInfos['nom']);
+                $pilote->setPointsLicence($piloteInfos['points_licence']);
+                $pilote->setPoste($piloteInfos['poste']);
+                $pilote->setEcurie($ecurie);
+                $manager->persist($pilote);
+            }
         }
 
         $manager->flush();
+    }
+
+    public function getDependencies(): array
+    {
+        return [
+            EcurieFixtures::class
+        ];
     }
 }

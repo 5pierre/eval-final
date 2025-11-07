@@ -27,9 +27,16 @@ class Ecurie
     #[ORM\OneToMany(targetEntity: Pilote::class, mappedBy: 'ecurie')]
     private Collection $pilotes;
 
+    /**
+     * @var Collection<int, Infraction>
+     */
+    #[ORM\OneToMany(targetEntity: Infraction::class, mappedBy: 'ecurie')]
+    private Collection $infractions;
+
     public function __construct()
     {
         $this->pilotes = new ArrayCollection();
+        $this->infractions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -85,6 +92,36 @@ class Ecurie
             // set the owning side to null (unless already changed)
             if ($pilote->getEcurie() === $this) {
                 $pilote->setEcurie(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Infraction>
+     */
+    public function getInfractions(): Collection
+    {
+        return $this->infractions;
+    }
+
+    public function addInfraction(Infraction $infraction): static
+    {
+        if (!$this->infractions->contains($infraction)) {
+            $this->infractions->add($infraction);
+            $infraction->setEcurie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInfraction(Infraction $infraction): static
+    {
+        if ($this->infractions->removeElement($infraction)) {
+            // set the owning side to null (unless already changed)
+            if ($infraction->getEcurie() === $this) {
+                $infraction->setEcurie(null);
             }
         }
 

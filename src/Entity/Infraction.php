@@ -30,6 +30,13 @@ class Infraction
     #[ORM\JoinColumn(nullable: false)]
     private ?Pilote $pilote = null;
 
+    #[ORM\Column]
+    private ?float $amende = null;
+
+    #[ORM\ManyToOne(inversedBy: 'infractions')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Ecurie $ecurie = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -91,6 +98,30 @@ class Infraction
     public function setPilote(?Pilote $pilote): static
     {
         $this->pilote = $pilote;
+
+        return $this;
+    }
+
+    public function getAmende(): ?float
+    {
+        return $this->amende;
+    }
+
+    public function setAmende(float $amende): static
+    {
+        $this->amende = $amende;
+
+        return $this;
+    }
+
+    public function getEcurie(): ?Ecurie
+    {
+        return $this->ecurie;
+    }
+
+    public function setEcurie(?Ecurie $ecurie): static
+    {
+        $this->ecurie = $ecurie;
 
         return $this;
     }

@@ -1,6 +1,5 @@
 <?php
 
-// src/Controller/CategoryController.php
 namespace App\Controller;
 
 // ...

@@ -4,6 +4,7 @@
 namespace App\Controller;
 
 // ...
+use App\Entity\Pilote;
 use App\Entity\Ecurie;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -11,36 +12,48 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
-#[Route('/api/category')]// a modifier
+#[Route('/f1')]// a modifier
 class PiloteController extends AbstractController
 {
-    #[Route('/createEcurie', name: 'create_ecurie', methods: ['POST'])]
-    public function createEcurie(
+    #[Route('/createPilote', name: 'create_pilote', methods: ['POST'])]
+    public function createPilote(
         Request $request,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+
     ): JsonResponse
     {
-        $hasAccess = $this->isGranted('ROLE_ADMIN');
+        //$hasAccess = $this->isGranted('ROLE_ADMIN');
 
-        if ($hasAccess) {
+        //if ($hasAccess) {
             $content = json_decode($request->getContent(), true);
+            $nomEcurie = $content['ecurie'];
 
-            $ecurie = new Ecurie();
-            if((!isset($content['nom'])) || (!isset($content['marque']))) {
-                return new JsonResponse('champ name ou marque manquant', JsonResponse::HTTP_BAD_REQUEST);
+            if (!$nomEcurie) {
+                return new JsonResponse(['error' => " nom de l'écurie manquant"], 400);
             }
-            $ecurie->setNom($content['nom']);
-            $ecurie->setMarque($content['marque']);
 
-            // tell Doctrine you want to (eventually) save the Product (no queries yet)
-            $entityManager->persist($ecurie);
+            $ecurie = $entityManager->getRepository(Ecurie::class)->findOneBy(['nom' => $nomEcurie]);
 
-            // actually executes the queries (i.e. the INSERT query)
+            if (!$ecurie) {
+                return new JsonResponse([
+                    'error' => sprintf('Écurie introuvable', $nomEcurie)
+                ], 404);
+            }
+
+            $pilote = new Pilote();
+            $pilote->setEcurie($ecurie);
+            $pilote->setNom($content['nom']);
+            $pilote->setPrenom($content['prenom']);
+            $pilote->setPointsLicence($content['pointsLicence']);
+            $pilote->setPoste($content['poste']);
+            
+            
+            $entityManager->persist($pilote);
             $entityManager->flush();
 
-            return new JsonResponse('Saved new category with id '.$ecurie->getId());
-        } else {
-            return new JsonResponse("Vous n'avez pas les accès nécessaires", JsonResponse::HTTP_FORBIDDEN);
-        }
+            return new JsonResponse("Insertion du pilote effectuée à l'id : ".$pilote->getId());
+       // } else {
+        //    return new JsonResponse("Vous n'avez pas les accès nécessaires", JsonResponse::HTTP_FORBIDDEN);
+       // }
     }
 }

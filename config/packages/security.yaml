@@ -34,6 +34,10 @@ security:
             stateless: true
             jwt: ~
 
+        f1:
+                pattern:   ^/f1
+                stateless: true
+                jwt: ~
 
 
 
@@ -44,6 +48,8 @@ security:
         - { path: ^/api/login, roles: PUBLIC_ACCESS , methods : POST}
         - { path: '^/api/category/create', roles: [ROLE_ADMIN], methods: POST }
         - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
+        - { path: '^/f1', roles: [ROLE_ADMIN], methods: POST }
+
         # - { path: '^/category/create', roles: [IS_AUTHENTICATED_FULLY, ROLE_USER], methods: POST }
         # - { path: '^/product/create', roles: [PUBLIC_ACCESS], methods: POST }
         # - { path: ^/api/login, roles: [PUBLIC_ACCESS] }

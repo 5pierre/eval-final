@@ -21,9 +21,9 @@ class EcurieController extends AbstractController
 
     ): JsonResponse
     {
-        //$hasAccess = $this->isGranted('ROLE_ADMIN');
+        $hasAccess = $this->isGranted('ROLE_ADMIN');
 
-        //if ($hasAccess) {
+        if ($hasAccess) {
             $content = json_decode($request->getContent(), true);
 
             $ecurie = new Ecurie();
@@ -35,8 +35,8 @@ class EcurieController extends AbstractController
             $entityManager->flush();
 
             return new JsonResponse("Insertionde la nouvelle écurie effectuée à l'id : ".$ecurie->getId());
-       // } else {
-        //    return new JsonResponse("Vous n'avez pas les accès nécessaires", JsonResponse::HTTP_FORBIDDEN);
-       // }
+       } else {
+           return new JsonResponse("Vous n'avez pas les accès nécessaires", JsonResponse::HTTP_FORBIDDEN);
+       }
     }
 }

@@ -13,7 +13,6 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Psr\Log\LoggerInterface;
-use App\Service\ProductManager;
 
 #[Route('/api/product')]
 class ProductController extends AbstractController
@@ -22,7 +21,7 @@ class ProductController extends AbstractController
     public function createProduct(
         Request $request,
         EntityManagerInterface $entityManager,
-        ProductManager $ProductManager
+         
     ): Response
     {
         $content = json_decode($request->getContent(), true);
@@ -86,12 +85,12 @@ class ProductController extends AbstractController
     #[Route('/all', name: 'all_product', methods: ['GET'])]
     public function allProduct(
         EntityManagerInterface $entityManager,
-        ProductManager $productManager
+        
     ): JsonResponse
     {
-        $message = $productManager->getHappyMessage();
+        //$message = $productManager->getHappyMessage();
 
-        dump($message);
+        //dump($message);
 
         $products = $entityManager->getRepository(Product::class)->findAll();
 
